@@ -1,3 +1,45 @@
+-- Written by Neil Schafer
+-- Code 5545, US Naval Research Laboratory
+-------------------------------------------------------------------------------------------------------------------------
+-- Burst Detector Real
+--
+-- Parameters
+-- BitWidth: Bit size of one element of data.
+-- coefBitWidth: Size of filter coefficients. Probably 18 for most vendor FPGAs.
+-- sampleAddressSpace: The number of bits used to address the BRAM that stores channel estimator values.
+--                     Defaults to 10. This means it stores 2^10 = 1024 values. 
+--                     For 12 bits of data, this would require 12kbits of RAM.
+--                     Powers of 2 are used to make average value calculations cheap.
+-- sampleDecimation: Amount of separation between samples added to the channel estimation.
+--                   Defaults to 100, meaning the channel estimation is updated only every 100 samples.
+--                   For the default case, this means the channel is estimated roughly across 102,400 samples.
+--                   Combinations of the sampleDecimation and sampleAddressSpace should consider how much RAM is
+--                   available and how long the channel estimator needs to evaluate compared to the length of a burst.
+--                   Set to "1" to not discard any samples in the estimation
+-- thresholdShiftGain: The amount the incoming signal strength needs to be above the "channel noise" in order to qualify as a burst.
+--                     Defaults to 2, meaning incoming signal strength must be 2^2 = 4 times higher than the channel average
+--                     to qualify as a burst event. In most cases, this value should probably not be higher than 3.
+-- threshold: The value at which energy will qualify as a burst regardless of channel noise.
+--            Defaults to 511. Set to 1 if you want all data to pass through (although that implies you shouldn't have a detector at all). 
+--            Set to 2^(bitwidth - 1) if you want to ignore this value (~1 in fixed point).
+-- burstLength: The number of samples of a burst event (the number of samples provided in the output after a burst is detected).
+--              Defaults to 1024.
+-- burstHistory: The number of samples before the burst trigger that are also included in the output.
+--               Defaults to 0. Low values increase the likelihood of missing burst data. High values increase the likelihood
+--               of including extraneous noise. Recommended values are between 0 and number of taps.
+-- taps:   The matched filter coefficients. Assumes these are fixed point signed fractions from [-1, 1).
+--         To use as an energy detector/basic squelch without a filter at all, 
+--         a single coefficient of "2^(bitwidth -1) -1, 0" should be provided. This will act as a multiply by 1, 
+--         although the cordic gain of 1.6 will still apply.
+--
+-- Behavior
+-- This component looks for a burst event, and will block all outgoing data until a burst event occurs.
+-- Once a burst event is detected, (burstHistory + burstLength) data samples are passed out of the component.
+-- A matched filter of at least length one must be provided, and the output of the filter is used to trigger the burst.
+-- A "channel estimator" takes samples of the filter output at regular intervals and uses a running average to estimate 
+-- the average energy of the channel. A burst is detected when the filter output exceeds the channel energy 
+-- by a predetermined amount.
+
 LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
 USE IEEE.NUMERIC_STD.ALL;
@@ -8,7 +50,6 @@ ENTITY BurstDetectorReal IS
         bitWidth              : POSITIVE      := DEFAULT_BITWIDTH;
         sampleAddressSpace    : POSITIVE      := DEFAULT_SAMPLE_ADDRESS_SPACE;
         sampleDecimation      : POSITIVE      := DEFAULT_DECIMATION;
-        numTaps               : POSITIVE      := DEFAULT_NUM_BURST_TAPS;
         coefBitWidth          : POSITIVE      := DEFAULT_COEF_BITWIDTH;
         averageThresholdShift : NATURAL       := DEFAULT_SHIFT_GAIN;
         taps                  : INTEGER_ARRAY := DEFAULT_BURST_TAPS;
@@ -29,7 +70,6 @@ END ENTITY BurstDetectorReal;
 ARCHITECTURE rtl OF BurstDetectorReal IS
     COMPONENT PolyphaseDecimatingFirFilter IS
         GENERIC(
-            NumTaps      : POSITIVE;
             Decimation   : POSITIVE;
             CoefBitWidth : POSITIVE;
             BitWidth     : POSITIVE;
@@ -94,7 +134,6 @@ ARCHITECTURE rtl OF BurstDetectorReal IS
 BEGIN
     matchedFilter : PolyphaseDecimatingFirFilter
         GENERIC MAP(
-            numTaps      => numTaps,
             decimation   => nonDecimation,
             coefBitWidth => coefBitWidth,
             bitWidth     => bitWidth,
@@ -114,7 +153,7 @@ BEGIN
     delay : PipelineReg
         GENERIC MAP(
             pipelineLength => filterDelay,
-            bitWidth    => bitWidth
+            bitWidth       => bitWidth
         )
         PORT MAP(
             reset   => reset,
@@ -144,12 +183,12 @@ BEGIN
     shiftedAverage(shiftedAverage'high DOWNTO averageThresholdShift) <= averageOut;
     shiftedAverage(averageThresholdShift - 1 DOWNTO 0)               <= (OTHERS => '0');
 
-    validOut <= '1' WHEN (unsigned(absFilterResult) > unsigned(shiftedAverage)) AND validMovingAverage = '1' ELSE 
-                '1' WHEN (unsigned(absFilterResult) >= threshold) AND validFilterOut = '1' ELSE 
-                '0';
+    validOut <= '1' WHEN (unsigned(absFilterResult) > unsigned(shiftedAverage)) AND validMovingAverage = '1'
+        ELSE '1' WHEN (unsigned(absFilterResult) >= threshold) AND validFilterOut = '1'
+        ELSE '0';
 
-    valid <= '1' WHEN (validDelayOut = '1' AND reset = '0' AND counter > 0) ELSE 
-             '0';
+    valid <= '1' WHEN (validDelayOut = '1' AND reset = '0' AND counter > 0)
+        ELSE '0';
 
     PROCESS(clock)
     BEGIN
@@ -165,5 +204,5 @@ BEGIN
             END IF;
         END IF;
     END PROCESS;
-    
+
 END ARCHITECTURE rtl;

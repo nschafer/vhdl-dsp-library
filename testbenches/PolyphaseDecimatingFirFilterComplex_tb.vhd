@@ -1,3 +1,6 @@
+-- Written by Neil Schafer
+-- Code 5545, US Naval Research Laboratory
+
 LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
 USE IEEE.NUMERIC_STD.ALL;
@@ -9,7 +12,6 @@ END PolyphaseDecimatingFirFilterComplex_tb;
 ARCHITECTURE behavior OF PolyphaseDecimatingFirFilterComplex_tb IS
     COMPONENT PolyphaseDecimatingFirFilterComplex IS
         GENERIC(
-            numTaps      : POSITIVE;
             decimation   : POSITIVE;
             coefBitWidth : POSITIVE;
             bitWidth     : POSITIVE;
@@ -28,21 +30,6 @@ ARCHITECTURE behavior OF PolyphaseDecimatingFirFilterComplex_tb IS
         );
     END COMPONENT;
 
-    COMPONENT delay IS
-        GENERIC(
-            delayLength : NATURAL;
-            bitWidth    : POSITIVE
-        );
-        PORT(
-            reset   : IN  STD_LOGIC;
-            clock   : IN  STD_LOGIC;
-            enable  : IN  STD_LOGIC;
-            dataIn  : IN  STD_LOGIC_VECTOR(bitWidth - 1 DOWNTO 0);
-            dataOut : OUT STD_LOGIC_VECTOR(bitWidth - 1 DOWNTO 0)
-        );
-    END COMPONENT;
-
-    CONSTANT testShiftGain    : NATURAL       := 0;
     CONSTANT testDecimation1  : POSITIVE      := 1;
     CONSTANT testDecimation2  : POSITIVE      := 2;
     CONSTANT testDecimation3  : POSITIVE      := 3;
@@ -65,7 +52,6 @@ ARCHITECTURE behavior OF PolyphaseDecimatingFirFilterComplex_tb IS
         -29490, -26213, -22936, -19659, -16382, -13105, -9828, -6551, -3276
     );
     CONSTANT testNumTaps   : POSITIVE := testRealTaps'length;
-    CONSTANT maxDecimation : POSITIVE := 10;
 
     CONSTANT testRealInput : INTEGER_ARRAY := (20, 40, 80, 100, 100, 20, 0); --always want trailing 0 for test bench case
     CONSTANT testImagInput : INTEGER_ARRAY := (50, 40, 30, 10, 200, 30, 0);
@@ -111,7 +97,6 @@ ARCHITECTURE behavior OF PolyphaseDecimatingFirFilterComplex_tb IS
 BEGIN
     noDec : PolyphaseDecimatingFirFilterComplex
         GENERIC MAP(
-            numTaps      => testNumTaps,
             decimation   => testDecimation1,
             coefBitWidth => testCoefBitWidth,
             bitWidth     => testBitWidthIn,
@@ -131,7 +116,6 @@ BEGIN
 
     dec2 : PolyphaseDecimatingFirFilterComplex
         GENERIC MAP(
-            numTaps      => testNumTaps,
             decimation   => testDecimation2,
             coefBitWidth => testCoefBitWidth,
             bitWidth     => testBitWidthIn,
@@ -151,7 +135,6 @@ BEGIN
 
     dec3 : PolyphaseDecimatingFirFilterComplex
         GENERIC MAP(
-            numTaps      => testNumTaps,
             decimation   => testDecimation3,
             coefBitWidth => testCoefBitWidth,
             bitWidth     => testBitWidthIn,
@@ -171,7 +154,6 @@ BEGIN
 
     dec4 : PolyphaseDecimatingFirFilterComplex
         GENERIC MAP(
-            numTaps      => testNumTaps,
             decimation   => testDecimation4,
             coefBitWidth => testCoefBitWidth,
             bitWidth     => testBitWidthIn,
@@ -191,7 +173,6 @@ BEGIN
 
     dec5 : PolyphaseDecimatingFirFilterComplex
         GENERIC MAP(
-            numTaps      => testNumTaps,
             decimation   => testDecimation5,
             coefBitWidth => testCoefBitWidth,
             bitWidth     => testBitWidthIn,
@@ -211,7 +192,6 @@ BEGIN
 
     dec6 : PolyphaseDecimatingFirFilterComplex
         GENERIC MAP(
-            numTaps      => testNumTaps,
             decimation   => testDecimation6,
             coefBitWidth => testCoefBitWidth,
             bitWidth     => testBitWidthIn,
@@ -231,7 +211,6 @@ BEGIN
 
     dec7 : PolyphaseDecimatingFirFilterComplex
         GENERIC MAP(
-            numTaps      => testNumTaps,
             decimation   => testDecimation7,
             coefBitWidth => testCoefBitWidth,
             bitWidth     => testBitWidthIn,
@@ -251,7 +230,6 @@ BEGIN
 
     dec8 : PolyphaseDecimatingFirFilterComplex
         GENERIC MAP(
-            numTaps      => testNumTaps,
             decimation   => testDecimation8,
             coefBitWidth => testCoefBitWidth,
             bitWidth     => testBitWidthIn,
@@ -271,7 +249,6 @@ BEGIN
 
     dec9 : PolyphaseDecimatingFirFilterComplex
         GENERIC MAP(
-            numTaps      => testNumTaps,
             decimation   => testDecimation9,
             coefBitWidth => testCoefBitWidth,
             bitWidth     => testBitWidthIn,
@@ -291,7 +268,6 @@ BEGIN
 
     dec10 : PolyphaseDecimatingFirFilterComplex
         GENERIC MAP(
-            numTaps      => testNumTaps,
             decimation   => testDecimation10,
             coefBitWidth => testCoefBitWidth,
             bitWidth     => testBitWidthIn,

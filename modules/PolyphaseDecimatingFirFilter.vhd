@@ -1,3 +1,25 @@
+-- Written by Neil Schafer
+-- Code 5545, US Naval Research Laboratory
+---------------------------------------------------------------------------------------------------
+--Polyphase Decimating FIR Filter Real
+--
+--Input: Signed Data 
+--Output: Signed Data
+--
+--Parameters
+--BitWidth: Bit size of one element of data.
+--coefBitWidth: Size of filter coefficients.
+--decimation: The decimation rate. Sets output rate.
+--taps:   The filter coefficients. Assumes these are fixed point signed fractions from [-1, 1) of size <coefBitWidth>.
+--        To decimate without filtering, a single coefficient of 
+--        "2^(bitwidth -1) -1" should be provided. This will act as a multiply of ~1. 
+--
+-- Behavior
+-- Combines filtering and decimation into one operation. Will accept any filter coefficients, although low pass filters are
+-- typical. Provides resource savings at the decimation rate. For instance, a 100 tap filter with a decimation of 10 requires
+-- only 10 multiplies. The same filter with a decimation of 20 requires 5 multiplies.
+
+
 LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
 USE IEEE.NUMERIC_STD.ALL;
@@ -6,7 +28,6 @@ USE WORK.DSP.ALL;
 
 ENTITY PolyphaseDecimatingFirFilter IS
     GENERIC(
-        numTaps      : POSITIVE      := DEFAULT_NUM_TAPS;
         decimation   : POSITIVE      := DEFAULT_DECIMATION;
         coefBitWidth : POSITIVE      := DEFAULT_COEF_BITWIDTH;
         bitWidth     : POSITIVE      := DEFAULT_BITWIDTH;
@@ -110,7 +131,7 @@ ARCHITECTURE Structural OF PolyphaseDecimatingFirFilter IS
         );
     END COMPONENT Reg;
 
-    CONSTANT subFilterLength : POSITIVE := INTEGER(ceil(real(NumTaps) / real(decimation)));
+    CONSTANT subFilterLength : POSITIVE := INTEGER(ceil(real(taps'length) / real(decimation)));
 
     CONSTANT coefBank : COEFFICIENT_BANK(0 TO decimation - 1, 0 TO subFilterLength - 1) := generateCoefBank(
         coefBitWidth => coefBitWidth,

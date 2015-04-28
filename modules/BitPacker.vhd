@@ -1,3 +1,16 @@
+-- Written by Neil Schafer
+-- Code 5545, US Naval Research Laboratory
+------------------------------------------------------------------------------------------------------------------------------
+-- Bit Packer
+--
+-- Parameters
+-- BitWidthIn : Number of bits of incoming data
+-- BitWidthOut : Number of bits of outgoing data
+--
+-- Behavior
+-- Incoming data is "packed" together, until <bitWidthOut> number of bits are placed together, then the packed output is sent.
+-- Data is packed big-endian. BitWidthIn must divide evenly into BitWidthOut.
+
 LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
 USE IEEE.NUMERIC_STD.ALL;

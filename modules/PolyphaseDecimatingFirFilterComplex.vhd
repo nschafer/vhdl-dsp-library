@@ -1,3 +1,29 @@
+-- Written by Neil Schafer
+-- Code 5545, US Naval Research Laboratory
+----------------------------------------------------------------------------------------------------------------------------
+-- Polyphase Decimating FIR Filter Complex
+--
+-- Input: Signed Complex Data
+-- Output: Signed Complex Data
+-- Assumes both real and imaginary inputs are available during enable. Outputs real and imaginary simultaneously.
+--
+-- Parameters 
+-- BitWidth: Bit size of one element of data.
+-- coefBitWidth: Size of filter coefficients.
+-- decimation: The decimation rate. Sets output rate.
+-- realTaps: The real filter coefficients. Assumes these are fixed point signed fractions from [-1, 1) of size <coefBitWidth>.
+--           To decimate without filtering, a single coefficient of "2^(bitwidth -1) -1, 0" should be provided. This will act as a multiply by 1. 
+--           Must be the same length as imagTaps.
+-- imagTaps: The imaginary filter coefficients. Assumes these are fixed point signed fractions from [-1, 1) of size <coefBitWidth>.
+--           To perform a real filter on complex data, set all imagTaps to "0."
+--
+-- Behavior
+-- Combines filtering and decimation into one operation. Will accept any filter coefficients, although low pass filters are
+-- typical. Provides resource savings at the decimation rate. For instance, a 100 tap filter with a decimation of 10 requires
+-- only 10 multiplies. The same filter with a decimation of 20 requires 5 multiplies.
+-- Since this uses complex multiplies, actual DSP block usage is typically number of multiplies * 4.
+
+
 LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
 USE IEEE.NUMERIC_STD.ALL;
@@ -6,7 +32,6 @@ USE WORK.DSP.ALL;
 
 ENTITY PolyphaseDecimatingFirFilterComplex IS
     GENERIC(
-        numTaps      : POSITIVE;
         decimation   : POSITIVE;
         coefBitWidth : POSITIVE;
         bitWidth     : POSITIVE;
@@ -28,7 +53,6 @@ END PolyphaseDecimatingFirFilterComplex;
 ARCHITECTURE Structural OF PolyphaseDecimatingFirFilterComplex IS
     COMPONENT PolyphaseDecimatingFirFilter IS
         GENERIC(
-            NumTaps      : POSITIVE;
             Decimation   : POSITIVE;
             CoefBitWidth : POSITIVE;
             BitWidth     : POSITIVE;
@@ -91,7 +115,6 @@ BEGIN
 
     realInRealFilter : PolyphaseDecimatingFirFilter
         GENERIC MAP(
-            numTaps      => realTaps'length,
             decimation   => decimation,
             coefBitWidth => coefBitWidth,
             bitWidth     => bitWidth,
@@ -108,7 +131,6 @@ BEGIN
 
     realInImagFilter : PolyphaseDecimatingFirFilter
         GENERIC MAP(
-            numTaps      => imagTaps'length,
             decimation   => decimation,
             coefBitWidth => coefBitWidth,
             bitWidth     => bitWidth,
@@ -125,7 +147,6 @@ BEGIN
 
     imagInRealFilter : PolyphaseDecimatingFirFilter
         GENERIC MAP(
-            numTaps      => realTaps'length,
             decimation   => decimation,
             coefBitWidth => coefBitWidth,
             bitWidth     => bitWidth,
@@ -142,7 +163,6 @@ BEGIN
 
     imagInImagFilter : PolyphaseDecimatingFirFilter
         GENERIC MAP(
-            numTaps      => imagTaps'length,
             decimation   => decimation,
             coefBitWidth => coefBitWidth,
             bitWidth     => bitWidth,

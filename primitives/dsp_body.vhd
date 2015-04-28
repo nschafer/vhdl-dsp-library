@@ -1,3 +1,5 @@
+-- Written by Neil Schafer
+-- Code 5545, US Naval Research Laboratory
 
 PACKAGE BODY DSP IS
     FUNCTION max(L, R : INTEGER) RETURN INTEGER IS

@@ -1,3 +1,6 @@
+-- Written by Neil Schafer
+-- Code 5545, US Naval Research Laboratory
+
 -- AccumOut is the actual phase of the signal thus far, NOT the amount of rotation
 -- (The amount of rotation to get to phase 0 is the OPPOSITE sign of the actual phase)
 -- AccumOut should allow for a quantized, normalized range of [-pi, pi)

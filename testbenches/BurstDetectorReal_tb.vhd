@@ -1,3 +1,6 @@
+-- Written by Neil Schafer
+-- Code 5545, US Naval Research Laboratory
+
 LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
 USE IEEE.NUMERIC_STD.ALL;
@@ -12,7 +15,6 @@ ARCHITECTURE behavior OF BurstDetectorReal_tb IS
             bitWidth              : POSITIVE;
             sampleAddressSpace    : POSITIVE;
             sampleDecimation      : POSITIVE;
-            numTaps               : POSITIVE;
             coefBitWidth          : POSITIVE;
             averageThresholdShift : NATURAL;
             taps                  : INTEGER_ARRAY;
@@ -56,7 +58,6 @@ BEGIN
             bitWidth              => testBitWidth,
             sampleAddressSpace    => testSampleAddressSpace,
             sampleDecimation      => testSampleDecimation,
-            numTaps               => testNumTaps,
             coefBitWidth          => testCoefBitWidth,
             averageThresholdShift => averageThresholdShift,
             taps                  => testTaps,

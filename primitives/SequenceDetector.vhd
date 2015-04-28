@@ -1,3 +1,6 @@
+-- Written by Neil Schafer
+-- Code 5545, US Naval Research Laboratory
+
 LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
 USE IEEE.NUMERIC_STD.ALL;
@@ -5,9 +8,8 @@ USE WORK.DSP.ALL;
 
 ENTITY SequenceDetector IS
     GENERIC(
-        sequenceLength : POSITIVE      := DEFAULT_SEQUENCE_LENGTH;
-        bitWidth       : POSITIVE      := DEFAULT_BITWIDTH;
-        sequence       : INTEGER_ARRAY := DEFAULT_SEQUENCE
+        bitWidth : POSITIVE      := DEFAULT_BITWIDTH;
+        sequence : INTEGER_ARRAY := DEFAULT_SEQUENCE
     );
     PORT(
         reset    : IN  STD_LOGIC;
@@ -43,7 +45,6 @@ BEGIN
 
     PROCESS(clock)
     BEGIN
-        ASSERT sequence'length = sequenceLength;
         IF (rising_edge(clock)) THEN
             IF (reset = '1') THEN
                 FOR I IN prevData'range LOOP
@@ -51,7 +52,7 @@ BEGIN
                 END LOOP;
             END IF;
             IF (enable = '1') THEN
-                IF sequenceLength = 1 THEN
+                IF sequence'length = 1 THEN
                     prevData(0) <= dataIn;
                 ELSE
                     prevData <= prevData(1 TO prevData'high) & dataIn;

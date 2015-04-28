@@ -1,3 +1,17 @@
+-- Written by Neil Schafer
+-- Code 5545, US Naval Research Laboratory
+----------------------------------------------------------------------------------------------------
+-- Binary Slicer
+--
+-- Parameters
+-- BitWidthIn : Number of bits of incoming data, presumably a signed value
+-- BitWidthOut : Number of bits of outgoing data. Only LSB is significant, all others are 0. Unsigned
+--
+-- Behavior
+-- Incoming data is treated as a signed integer. 
+-- If incoming value is zero or greater, output is 1.
+-- If incoming data is negative, output is 0.
+
 LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
 USE IEEE.NUMERIC_STD.ALL;

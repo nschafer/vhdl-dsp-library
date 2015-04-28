@@ -1,3 +1,24 @@
+-- Written by Neil Schafer
+-- Code 5545, US Naval Research Laboratory
+---------------------------------------------------------------------------------------------------------------
+-- Quadrature Demodulator
+--
+-- Input: Signed Complex Data
+-- Output One, phase (demodOut): Signed Real Data
+-- Output Two, magnitude (magOut): Unsigned Real Data
+-- Assumes both real and imaginary inputs are available during enable. Outputs phase and magnitude simultaneously
+--
+-- Parameters
+-- BitWidth: Bit size of one element of input data. Also the bitwidth of the magnitude output.
+-- phaseBitWidth: Size of internal representation of phase, and phase output bitwidth.
+-- numIterations: The number of ATAN2 Cordic rotations. Used to find phase angle between I and Q and gauge magnitude of complex data. 
+--                Defaults to 8. Each rotation adds latency. Results in a gain of roughly 1.6 that is NOT normalized out.
+--
+-- Behavior
+-- Provides ATAN2 quadrature demodulation behavior. Output is a quantized frequency between [-pi, pi), where -pi represents the lowest possible
+-- "frequency" for the sample rate and "~pi" is the highest. Magnitude of the input data is calculated at no extra cost.
+
+
 LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
 USE IEEE.NUMERIC_STD.ALL;

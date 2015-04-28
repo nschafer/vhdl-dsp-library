@@ -1,3 +1,6 @@
+-- Written by Neil Schafer
+-- Code 5545, US Naval Research Laboratory
+
 LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
 USE IEEE.NUMERIC_STD.ALL;
@@ -5,7 +8,6 @@ USE IEEE.MATH_REAL.ALL;
 USE IEEE.MATH_COMPLEX.ALL;
 
 PACKAGE DSP IS
-
     TYPE INTEGER_ARRAY IS ARRAY (NATURAL RANGE <>) OF INTEGER;
     TYPE REAL_ARRAY IS ARRAY (NATURAL RANGE <>) OF REAL;
     TYPE COEFFICIENT_BANK IS ARRAY (NATURAL RANGE <>, NATURAL RANGE <>) OF INTEGER;
@@ -28,9 +30,15 @@ PACKAGE DSP IS
 
     CONSTANT DEFAULT_NUM_TAPS : POSITIVE := 128;
 
+    CONSTANT DEFAULT_HILBERT_ORDER : POSITIVE := 21;
+
+    CONSTANT DEFAULT_NUM_INTERP_TAPS : POSITIVE := 40;
+
     CONSTANT DEFAULT_COEF_BITWIDTH : POSITIVE := 18;
 
     CONSTANT DEFAULT_DECIMATION : POSITIVE := 5;
+
+    CONSTANT DEFAULT_INTERPOLATION : POSITIVE := 2;
 
     CONSTANT DEFAULT_COUNT : NATURAL := 5;
 
@@ -46,9 +54,9 @@ PACKAGE DSP IS
 
     CONSTANT DEFAULT_HISTORY : NATURAL := 0;
 
-    CONSTANT DEFAULT_ALPHA : INTEGER := 128;
+    CONSTANT DEFAULT_ALPHA : INTEGER := 6784;
 
-    CONSTANT DEFAULT_BETA : INTEGER := 256;
+    CONSTANT DEFAULT_BETA : INTEGER := 601;
 
     CONSTANT DEFAULT_SPS : REAL := 4.0;
 
@@ -130,7 +138,6 @@ PACKAGE DSP IS
         matchedCoefBank                : COEFFICIENT_BANK
         ) RETURN COEFFICIENT_BANK;
 
-    
     COMPONENT Delay IS
         GENERIC(
             delayLength : NATURAL;
@@ -147,7 +154,6 @@ PACKAGE DSP IS
 
     COMPONENT StartFrameDetector
         GENERIC(
-            sequenceLength : POSITIVE      := DEFAULT_SEQUENCE_LENGTH;
             bitWidth       : POSITIVE      := DEFAULT_BITWIDTH;
             packetSize     : POSITIVE      := DEFAULT_PACKET_SIZE;
             searchSequence : INTEGER_ARRAY := DEFAULT_SEQUENCE
@@ -164,7 +170,6 @@ PACKAGE DSP IS
 
     COMPONENT PolyphaseDecimatingFirFilter IS
         GENERIC(
-            NumTaps      : POSITIVE      := DEFAULT_NUM_TAPS;
             Decimation   : POSITIVE      := DEFAULT_DECIMATION;
             CoefBitWidth : POSITIVE      := DEFAULT_COEF_BITWIDTH;
             BitWidth     : POSITIVE      := DEFAULT_BITWIDTH;
@@ -182,7 +187,6 @@ PACKAGE DSP IS
 
     COMPONENT PolyphaseDecimatingFirFilterComplex IS
         GENERIC(
-            numTaps      : POSITIVE      := DEFAULT_NUM_TAPS;
             decimation   : POSITIVE      := DEFAULT_DECIMATION;
             coefBitWidth : POSITIVE      := DEFAULT_COEF_BITWIDTH;
             bitWidth     : POSITIVE      := DEFAULT_BITWIDTH;
@@ -206,7 +210,6 @@ PACKAGE DSP IS
             bitWidth              : POSITIVE      := DEFAULT_BITWIDTH;
             sampleAddressSpace    : POSITIVE      := DEFAULT_SAMPLE_ADDRESS_SPACE;
             sampleDecimation      : POSITIVE      := DEFAULT_DECIMATION;
-            numTaps               : POSITIVE      := DEFAULT_NUM_BURST_TAPS;
             coefBitWidth          : POSITIVE      := DEFAULT_COEF_BITWIDTH;
             averageThresholdShift : NATURAL       := DEFAULT_SHIFT_GAIN;
             taps                  : INTEGER_ARRAY := DEFAULT_BURST_TAPS;
@@ -229,7 +232,6 @@ PACKAGE DSP IS
             bitWidth              : POSITIVE      := DEFAULT_BITWIDTH;
             sampleAddressSpace    : POSITIVE      := DEFAULT_SAMPLE_ADDRESS_SPACE;
             sampleDecimation      : POSITIVE      := DEFAULT_DECIMATION;
-            numTaps               : POSITIVE      := DEFAULT_NUM_BURST_TAPS;
             coefBitWidth          : POSITIVE      := DEFAULT_COEF_BITWIDTH;
             averageThresholdShift : NATURAL       := DEFAULT_SHIFT_GAIN;
             realTaps              : INTEGER_ARRAY := DEFAULT_BURST_TAPS;
@@ -271,7 +273,6 @@ PACKAGE DSP IS
 
     COMPONENT PolyphaseClockSynch IS
         GENERIC(
-            numTaps          : POSITIVE      := DEFAULT_NUM_TAPS;
             numSubfilters    : POSITIVE      := DEFAULT_DECIMATION;
             coefBitWidth     : POSITIVE      := DEFAULT_COEF_BITWIDTH;
             bitWidth         : POSITIVE      := DEFAULT_BITWIDTH;

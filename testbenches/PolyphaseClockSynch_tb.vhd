@@ -1,3 +1,6 @@
+-- Written by Neil Schafer
+-- Code 5545, US Naval Research Laboratory
+
 LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
 USE IEEE.NUMERIC_STD.ALL;
@@ -10,7 +13,6 @@ END PolyphaseClockSynch_tb;
 ARCHITECTURE behavior OF PolyphaseClockSynch_tb IS
     COMPONENT PolyphaseClockSynch IS
         GENERIC(
-            numTaps          : POSITIVE;
             numSubfilters    : POSITIVE;
             coefBitWidth     : POSITIVE;
             bitWidth         : POSITIVE;
@@ -29,19 +31,16 @@ ARCHITECTURE behavior OF PolyphaseClockSynch_tb IS
         );
     END COMPONENT;
 
-    CONSTANT testNumTaps          : POSITIVE      := 128;
     CONSTANT testNumSubFilters    : POSITIVE      := 32;
     CONSTANT testCoefBitWidth     : POSITIVE      := 18;
     CONSTANT testBitWidth         : POSITIVE      := 12;
-    CONSTANT testSamplesPerSymbol : REAL      := 4.0;
+    CONSTANT testSamplesPerSymbol : REAL          := 4.0;
     CONSTANT testAlpha            : INTEGER       := 6784;
     CONSTANT testBeta             : INTEGER       := 601;
     CONSTANT testInput            : INTEGER_ARRAY := (
-
     );
 
     CONSTANT realTaps : REAL_ARRAY := (
-       
     );
 
     CONSTANT intTaps : INTEGER_ARRAY(realTaps'range) := realToInteger(
@@ -66,7 +65,6 @@ ARCHITECTURE behavior OF PolyphaseClockSynch_tb IS
 BEGIN
     synch : PolyphaseClockSynch
         GENERIC MAP(
-            numTaps          => testNumTaps,
             numSubFilters    => testNumSubFilters,
             coefBitWidth     => testCoefBitWidth,
             bitWidth         => testBitWidth,

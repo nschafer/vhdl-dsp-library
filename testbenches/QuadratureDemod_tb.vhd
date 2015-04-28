@@ -1,3 +1,6 @@
+-- Written by Neil Schafer
+-- Code 5545, US Naval Research Laboratory
+
 LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
 USE IEEE.NUMERIC_STD.ALL;
@@ -42,16 +45,16 @@ ARCHITECTURE behavior OF QuadratureDemod_tb IS
     SIGNAL enable    : STD_LOGIC := '0';
     SIGNAL valid     : STD_LOGIC := '0';
     SIGNAL realIn    : STD_LOGIC_VECTOR(testBitWidthIn - 1 DOWNTO 0);
-    SIGNAL quadIn    : STD_LOGIC_VECTOR(testBitWidthIn - 1 DOWNTO 0);
-    SIGNAL magOut    : STD_LOGIC_VECTOR(testBitWidthIn - 1 DOWNTO 0);
+    SIGNAL quadIn  : STD_LOGIC_VECTOR(testBitWidthIn - 1 DOWNTO 0);
+    SIGNAL magOut  : STD_LOGIC_VECTOR(testBitWidthIn - 1 DOWNTO 0);
     SIGNAL demodOut  : STD_LOGIC_VECTOR(testPhaseBitWidth - 1 DOWNTO 0);
 
 BEGIN
     quad : QuadratureDemod
         GENERIC MAP(
-            bitWidth       => testBitWidthIn,
+            bitWidth   => testBitWidthIn,
             phaseBitWidth  => testPhaseBitWidth,
-            numIterations  => testNumIterations
+            numIterations         => testNumIterations
         )
         PORT MAP(
             clock   => clock,

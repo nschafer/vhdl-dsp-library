@@ -1,3 +1,6 @@
+-- Written by Neil Schafer
+-- Code 5545, US Naval Research Laboratory
+
 LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
 USE IEEE.NUMERIC_STD.ALL;
@@ -9,7 +12,6 @@ END StartFrameDetector_tb;
 ARCHITECTURE behavior OF StartFrameDetector_tb IS
 	COMPONENT StartFrameDetector
 		GENERIC(
-			sequenceLength : POSITIVE;
 			bitWidth       : POSITIVE;
 			packetSize     : POSITIVE;
 			searchSequence : INTEGER_ARRAY
@@ -42,7 +44,6 @@ ARCHITECTURE behavior OF StartFrameDetector_tb IS
 BEGIN
 	uut : StartFrameDetector
 		GENERIC MAP(
-			sequenceLength => 5,
 			bitWidth       => 4,
 			packetSize     => 10,
 			searchSequence => (2, 2, 0, 2, 2)
